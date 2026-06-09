@@ -26,6 +26,29 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional Hugging Face Hub dataset repo used directly by train.py.",
     )
+    parser.add_argument(
+        "--dataset_manifest",
+        default=None,
+        help=(
+            "Optional local CSV/JSONL/JSON/Parquet manifest. When set, "
+            "the pipeline creates --hf_dataset_path before training."
+        ),
+    )
+    parser.add_argument(
+        "--dataset_root",
+        default=None,
+        help="Optional folder containing real/ and fake/ subfolders.",
+    )
+    parser.add_argument("--image_column", default="image")
+    parser.add_argument("--label_column", default="label")
+    parser.add_argument("--source_column", default="source")
+    parser.add_argument("--split_column", default="split")
+    parser.add_argument(
+        "--image_base_dir",
+        default=None,
+        help="Base directory used to resolve relative image paths in the manifest.",
+    )
+    parser.add_argument("--val_ratio", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=42)
 
     parser.add_argument("--name", default="pgc_dinov3_large")
@@ -72,6 +95,44 @@ def main() -> None:
 
     repo_root = Path(__file__).resolve().parent
     hf_dataset_path = Path(args.hf_dataset_path).expanduser()
+
+    if (args.dataset_manifest or args.dataset_root) and args.hf_dataset_repo:
+        raise ValueError(
+            "Use either --dataset_root/--dataset_manifest to create a local "
+            "HF dataset, or --hf_dataset_repo to train from Hub, not both."
+        )
+
+    if args.dataset_root or args.dataset_manifest:
+        create_cmd = [
+            sys.executable,
+            str(repo_root / "data" / "create_dataset.py"),
+            "--output_dir",
+            str(hf_dataset_path),
+            "--val_ratio",
+            str(args.val_ratio),
+            "--seed",
+            str(args.seed),
+        ]
+        if args.dataset_root:
+            create_cmd.extend(["--dataset_root", args.dataset_root])
+        if args.dataset_manifest:
+            create_cmd.extend(
+                [
+                    "--manifest",
+                    args.dataset_manifest,
+                    "--image_column",
+                    args.image_column,
+                    "--label_column",
+                    args.label_column,
+                    "--source_column",
+                    args.source_column,
+                    "--split_column",
+                    args.split_column,
+                ]
+            )
+        if args.image_base_dir and args.dataset_manifest:
+            create_cmd.extend(["--image_base_dir", args.image_base_dir])
+        _run(create_cmd)
 
     train_script = str(repo_root / "train.py")
     if args.nproc_per_node > 1:
