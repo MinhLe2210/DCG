@@ -110,34 +110,6 @@ def build_train_parser() -> argparse.ArgumentParser:
     )
 
     # ----- Training data ---------------------------------------------------
-    # ``--real_image_dir`` and ``--fake_image_dir`` both accept *one or more*
-    # root directories (``nargs='+'``).  ``RealFakeDataset`` scans every
-    # supplied directory, concatenates the samples and performs a global
-    # ``random.shuffle`` so that every mini-batch can freely mix sources.
-    parser.add_argument(
-        "--real_image_dir",
-        type=str,
-        nargs="+",
-        default=None,
-        help=(
-            "One or more root directories of real training images. "
-            "Example: --real_image_dir /path/A /path/B. All directories are "
-            "scanned recursively and the resulting samples are merged + "
-            "shuffled before training."
-        ),
-    )
-    parser.add_argument(
-        "--fake_image_dir",
-        type=str,
-        nargs="+",
-        default=None,
-        help=(
-            "One or more root directories of fake / generated training "
-            "images. Example: --fake_image_dir /path/A /path/B. All "
-            "directories are scanned recursively and the resulting samples "
-            "are merged + shuffled before training."
-        ),
-    )
     parser.add_argument(
         "--hf_dataset_path",
         type=str,
@@ -170,16 +142,6 @@ def build_train_parser() -> argparse.ArgumentParser:
     )
 
     # ----- Mid-training evaluation ----------------------------------------
-    parser.add_argument(
-        "--test_root",
-        type=str,
-        default=None,
-        help=(
-            "Optional root directory of the evaluation dataset "
-            "(UniversalFakeDetect layout: ``<root>/<subset>/{0_real,1_fake}``). "
-            "If supplied the trainer evaluates on it periodically."
-        ),
-    )
     parser.add_argument(
         "--eval_batch_size",
         type=int,
@@ -327,10 +289,34 @@ def build_test_parser() -> argparse.ArgumentParser:
         help="Path to the trained model checkpoint (.pth).",
     )
     parser.add_argument(
-        "--test_root",
+        "--hf_dataset_path",
         type=str,
-        required=True,
-        help="Root directory of the evaluation dataset.",
+        default=None,
+        help=(
+            "Local Hugging Face Dataset/DatasetDict path created with "
+            "save_to_disk(). Falls back to HF_DATASET_PATH when omitted."
+        ),
+    )
+    parser.add_argument(
+        "--hf_dataset_repo",
+        type=str,
+        default=None,
+        help=(
+            "Optional Hugging Face Hub dataset repo. Falls back to "
+            "HF_DATASET_REPO when omitted."
+        ),
+    )
+    parser.add_argument(
+        "--hf_eval_split",
+        type=str,
+        default="val",
+        help="Hugging Face dataset split used for evaluation.",
+    )
+    parser.add_argument(
+        "--hf_eval_subset_name",
+        type=str,
+        default=None,
+        help="Subset name used when the HF split has no source column.",
     )
     parser.add_argument(
         "--checkpoints_dir",

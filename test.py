@@ -1,6 +1,6 @@
 import torch
 
-from data.eval_dataset import UniversalFakeDetectDataset
+from data.eval_dataset import HFRealFakeEvalDataset
 from data.transforms import MEAN, STD, create_eval_transforms
 from engine.evaluator import evaluate_model
 from models.pgc import PGCNetwork
@@ -28,8 +28,14 @@ def main():
     transform = create_eval_transforms(
         image_size=args.cropSize, mean=MEAN['dino'], std=STD['dino'],
     )
-    logger_inst.info('Loading test dataset: %s', args.test_root)
-    dataset = UniversalFakeDetectDataset(args.test_root, transform=transform)
+    logger_inst.info('Loading HF eval split: %s', args.hf_eval_split)
+    dataset = HFRealFakeEvalDataset(
+        transform=transform,
+        split=args.hf_eval_split,
+        subset_name=args.hf_eval_subset_name,
+        dataset_path=args.hf_dataset_path,
+        dataset_repo=args.hf_dataset_repo,
+    )
 
     # ---------------- Build & load model ----------------
     model = PGCNetwork(

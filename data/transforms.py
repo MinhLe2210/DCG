@@ -1,5 +1,4 @@
 import logging
-import os
 from typing import List
 
 import torch
@@ -20,45 +19,6 @@ STD = {
 
 RESIDUAL_MEAN: List[float] = [0.0, 0.0, 0.0]
 RESIDUAL_STD: List[float] = [0.5, 0.5, 0.5]
-
-
-# ---------------------------------------------------------------------------
-# Filesystem helpers
-# ---------------------------------------------------------------------------
-def recursively_read(
-    rootdir: str,
-    must_contain: str,
-    exts=("png", "jpg", "jpeg", "JPEG", "bmp", "webp"),
-) -> List[str]:
-    """Recursively scan ``rootdir`` for image files.
-
-    Args:
-        rootdir: Root of the search.
-        must_contain: Optional substring filter applied to the full path.
-        exts: Allowed file extensions (case-insensitive on the lowercase form).
-
-    Returns:
-        List of absolute / joined paths to the matching files.
-    """
-    out: List[str] = []
-    exts_lc = {e.lower() for e in exts}
-    for r, _, files in os.walk(rootdir, followlinks=True):
-        for file in files:
-            # Defensive split: files without an extension are skipped instead
-            # of raising IndexError.
-            parts = file.split(".")
-            if len(parts) < 2:
-                continue
-            ext = parts[-1].lower()
-            full = os.path.join(r, file)
-            if ext in exts_lc and must_contain in full:
-                out.append(full)
-    return out
-
-
-def get_list(path: str, must_contain: str = "") -> List[str]:
-    """Convenience wrapper around :func:`recursively_read` with no extras."""
-    return recursively_read(path, must_contain)
 
 
 # ---------------------------------------------------------------------------

@@ -41,8 +41,8 @@ def load_hf_split(
         if not resolved.exists():
             raise FileNotFoundError(
                 f"Hugging Face dataset path does not exist: {resolved}\n"
-                "Build it with data/build_hf_dataset.py or set "
-                "HF_DATASET_PATH=/absolute/path/to/dataset."
+                "Set HF_DATASET_PATH=/absolute/path/to/dataset or pass "
+                "--hf_dataset_repo to read from the Hugging Face Hub."
             )
 
         loaded = load_from_disk(

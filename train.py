@@ -5,7 +5,7 @@ import time
 import numpy as np
 
 from data.dataloader import create_dataloader
-from data.eval_dataset import HFRealFakeEvalDataset, UniversalFakeDetectDataset
+from data.eval_dataset import HFRealFakeEvalDataset
 from data.transforms import MEAN, STD, create_eval_transforms
 from engine.evaluator import evaluate_model
 from engine.trainer import PGCTrainer
@@ -21,10 +21,6 @@ logger = logging.getLogger(__name__)
 
 def _build_test_datasets(opt, eval_transform):
     test_datasets = {}
-    if opt.test_root is not None:
-        test_datasets['Universal'] = UniversalFakeDetectDataset(
-            opt.test_root, transform=eval_transform,
-        )
     if opt.hf_eval_split is not None:
         test_datasets['HF'] = HFRealFakeEvalDataset(
             transform=eval_transform,

@@ -81,15 +81,6 @@ def log_training_config(logger: logging.Logger, opt) -> None:
     logger.info("HF dataset repo: %s", opt.hf_dataset_repo)
     logger.info("HF train split: %s", opt.hf_train_split)
     logger.info("HF eval split: %s", opt.hf_eval_split)
-    real_image_dirs = opt.real_image_dir or []
-    fake_image_dirs = opt.fake_image_dir or []
-    logger.info("Real image dirs (%d):", len(real_image_dirs))
-    for idx, real_dir in enumerate(real_image_dirs):
-        logger.info("  [%d] %s", idx, real_dir)
-    logger.info("Fake image dirs (%d):", len(fake_image_dirs))
-    for idx, fake_dir in enumerate(fake_image_dirs):
-        logger.info("  [%d] %s", idx, fake_dir)
-    logger.info("Test root: %s", opt.test_root)
     logger.info("DINO pretrained root: %s", opt.dino_pretrained_root)
     logger.info("PGCM tau (RGB): %.4f", opt.tau_rgb)
     logger.info("PGCM tau (Residual): %.4f", opt.tau_res)
@@ -106,7 +97,9 @@ def log_test_config(logger: logging.Logger, args) -> None:
     """
     logger.info("==== Test configuration ====")
     logger.info("Checkpoint: %s", args.checkpoint)
-    logger.info("Test root: %s", args.test_root)
+    logger.info("HF dataset path: %s", args.hf_dataset_path)
+    logger.info("HF dataset repo: %s", args.hf_dataset_repo)
+    logger.info("HF eval split: %s", args.hf_eval_split)
     logger.info("Batch size: %d", args.batch_size)
     logger.info("Num workers: %d", args.num_workers)
     logger.info("Devices: %s", args.devices)
