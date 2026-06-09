@@ -1,7 +1,8 @@
 # PGC DINOv3 Finetuning
 
-This repo trains/evaluates PGC with Hugging Face datasets only. There is no
-local folder conversion path and no filesystem image-folder training reader.
+This repo trains/evaluates PGC from Hugging Face datasets. If your raw dataset
+is a local folder with `real/` and `fake/`, run the create-dataset step first;
+training itself still reads the generated HF dataset.
 
 ## Dataset
 
