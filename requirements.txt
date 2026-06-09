@@ -1,0 +1,13 @@
+torch
+torchvision
+torchaudio
+transformers
+huggingface-hub
+safetensors
+tokenizers
+numpy
+scipy
+scikit-learn
+Pillow
+tqdm
+datasets
